@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../core/utils/dependency_injection.dart';
+import '../../bloc/auth/auth_bloc.dart';
+import '../../bloc/auth/auth_event.dart';
+import '../../bloc/auth/auth_state.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,7 +17,6 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
-  bool _isLoading = false;
   
   @override
   void dispose() {
@@ -21,25 +25,41 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
   
-  Future<void> _handleLogin() async {
+  void _handleLogin(BuildContext context) {
     if (_formKey.currentState?.validate() ?? false) {
-      setState(() {
-        _isLoading = true;
-      });
-      
-      // TODO: BLoC를 통한 로그인 로직 구현
-      await Future.delayed(const Duration(seconds: 2)); // 시뮬레이션
-      
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      context.read<AuthBloc>().add(
+        LoginRequested(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        ),
+      );
     }
   }
   
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => DependencyInjection.createAuthBloc(),
+      child: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Theme.of(context).colorScheme.error,
+              ),
+            );
+          } else if (state is AuthAuthenticated) {
+            // TODO: 대시보드로 이동
+            Navigator.pushReplacementNamed(context, '/dashboard');
+          }
+        },
+        child: _buildBody(context),
+      ),
+    );
+  }
+  
+  Widget _buildBody(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -132,21 +152,26 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 24),
                 
                 // 로그인 버튼
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _handleLogin,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: _isLoading
-                    ? SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      )
-                    : const Text('로그인'),
+                BlocBuilder<AuthBloc, AuthState>(
+                  builder: (context, state) {
+                    final isLoading = state is AuthLoading;
+                    return ElevatedButton(
+                      onPressed: isLoading ? null : () => _handleLogin(context),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: isLoading
+                        ? SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          )
+                        : const Text('로그인'),
+                    );
+                  },
                 ),
                 const SizedBox(height: 16),
                 

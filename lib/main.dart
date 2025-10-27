@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:household_ledger/core/theme/app_theme.dart';
+import 'package:household_ledger/core/utils/dependency_injection.dart';
 import 'package:household_ledger/presentation/pages/login/login_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await DependencyInjection.init();
   runApp(const MyApp());
 }
 

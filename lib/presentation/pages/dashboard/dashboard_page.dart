@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../transactions/quick_add_modal.dart';
+import '../../widgets/common/bottom_nav_bar.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -88,7 +89,7 @@ class DashboardPage extends StatelessWidget {
         icon: const Icon(Icons.add),
         label: const Text('거래 입력'),
       ),
-      bottomNavigationBar: _BottomNavBar(currentIndex: 0),
+      bottomNavigationBar: const AppBottomNavBar(currentIndex: 0),
     );
   }
   

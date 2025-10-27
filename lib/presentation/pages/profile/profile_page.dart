@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../widgets/common/bottom_nav_bar.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -129,6 +130,7 @@ class ProfilePage extends StatelessWidget {
           ),
         ],
       ),
+      bottomNavigationBar: const AppBottomNavBar(currentIndex: 3),
     );
   }
   

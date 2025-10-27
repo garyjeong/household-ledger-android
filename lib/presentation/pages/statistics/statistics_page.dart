@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../../widgets/common/bottom_nav_bar.dart';
 
 class StatisticsPage extends StatelessWidget {
   const StatisticsPage({super.key});

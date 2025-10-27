@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'quick_add_modal.dart';
+import '../../widgets/common/bottom_nav_bar.dart';
 
 class TransactionListPage extends StatefulWidget {
   const TransactionListPage({super.key});
@@ -80,6 +81,7 @@ class _TransactionListPageState extends State<TransactionListPage> {
         icon: const Icon(Icons.add),
         label: const Text('거래 입력'),
       ),
+      bottomNavigationBar: const AppBottomNavBar(currentIndex: 1),
     );
   }
   

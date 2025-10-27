@@ -1,8 +1,8 @@
-# 📱 안드로이드 앱 개발 TODO
+# 📱 Flutter 모바일 앱 개발 TODO
 
-**시작일**: Phase 1 완료 후 (약 4주 후)  
+**시작일**: 2025년 10월  
 **목표**: Google Play 배포 가능한 MVP 앱  
-**예상 기간**: 8주 (Phase 2: 4주 + Phase 3: 4주)
+**예상 기간**: 6주 (Phase 1: 3주 + Phase 2: 3주)
 
 ---
 
@@ -10,121 +10,147 @@
 
 ### 기존 자산
 - ✅ **웹앱 (household-ledger)**: 완성된 UI/UX 디자인
-- ✅ **FastAPI 백엔드**: Phase 1 완료 후 사용 가능
+- ✅ **FastAPI 백엔드**: 완료 (http://localhost:8000)
 - ✅ **API 명세**: Swagger 문서 제공
 
 ### 개발 목표
-- 🎯 **기술 스택**: Kotlin + Jetpack Compose
-- 🎯 **아키텍처**: MVVM + Clean Architecture
-- 🎯 **분리된 관심사**: UI, Domain, Data Layer
-- 🎯 **오프라인 지원**: Room DB 캐싱
+- 🎯 **기술 스택**: Flutter (Dart)
+- 🎯 **아키텍처**: BLoC Pattern + Clean Architecture
+- 🎯 **상태 관리**: flutter_bloc
+- 🎯 **로컬 DB**: Hive / SharedPreferences
+- 🎯 **네트워크**: http + dio
 
 ---
 
-## ✅ Phase 2 (Week 5-8): 기본 구조 및 인증
+## ✅ Phase 1 (Week 1-3): 프로젝트 초기화 및 인증
 
-### 🏗️ Week 5: 프로젝트 초기화 및 의존성 설정
+### 🏗️ Week 1: Flutter 프로젝트 초기화
 
 #### 프로젝트 생성
-- [ ] Android Studio에서 새 프로젝트 생성
-  - Template: Empty Activity
-  - Language: Kotlin
-  - Minimum SDK: API 24 (Android 7.0)
-  - Build configuration: Gradle Kotlin DSL
-
-#### 의존성 추가 (`build.gradle.kts`)
-- [ ] Jetpack Compose
-  ```kotlin
-  implementation("androidx.compose.ui:ui")
-  implementation("androidx.compose.material3:material3")
-  implementation("androidx.navigation:navigation-compose")
+- [ ] Flutter 프로젝트 생성
+  ```bash
+  flutter create household_ledger_app --org com.householdledger --platforms android
+  cd household_ledger_app
   ```
 
-- [ ] ViewModel + LiveData
-  ```kotlin
-  implementation("androidx.lifecycle:lifecycle-viewmodel-compose")
-  implementation("androidx.lifecycle:lifecycle-runtime-compose")
+#### 의존성 추가 (`pubspec.yaml`)
+- [ ] 상태 관리 (BLoC)
+  ```yaml
+  dependencies:
+    flutter_bloc: ^8.1.3
+    equatable: ^2.0.5
   ```
 
-- [ ] 의존성 주입 (Koin)
-  ```kotlin
-  implementation("io.insert-koin:koin-androidx-compose")
+- [ ] 네트워킹 (HTTP + Dio)
+  ```yaml
+    http: ^1.1.0
+    dio: ^5.4.0
+    dio_interceptors: ^5.4.0
   ```
 
-- [ ] 네트워킹 (Retrofit + OkHttp)
-  ```kotlin
-  implementation("com.squareup.retrofit2:retrofit")
-  implementation("com.squareup.retrofit2:converter-gson")
-  implementation("com.squareup.okhttp3:okhttp")
-  implementation("com.squareup.okhttp3:logging-interceptor")
+- [ ] 로컬 DB (Hive)
+  ```yaml
+    hive: ^2.2.3
+    hive_flutter: ^1.1.0
+    path_provider: ^2.1.1
   ```
 
-- [ ] 로컬 DB (Room)
-  ```kotlin
-  implementation("androidx.room:room-runtime")
-  kapt("androidx.room:room-compiler")
-  implementation("androidx.room:room-ktx")
+- [ ] 인증 & 보안
+  ```yaml
+    flutter_secure_storage: ^9.0.0
+    shared_preferences: ^2.2.2
   ```
 
-- [ ] Coroutines + Flow
-  ```kotlin
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android")
+- [ ] UI/UX
+  ```yaml
+    google_fonts: ^6.1.0
+    flutter_svg: ^2.0.9
+    shimmer: ^3.0.0
+    cached_network_image: ^3.3.0
   ```
 
-- [ ] 기타 유틸리티
-  ```kotlin
-  implementation("com.jakewharton.timber:timber")
-  implementation("androidx.datastore:datastore-preferences")
+- [ ] 차트
+  ```yaml
+    fl_chart: ^0.66.0
+  ```
+
+- [ ] 유틸리티
+  ```yaml
+    intl: ^0.19.0
+    logger: ^2.0.0
   ```
 
 #### 디렉토리 구조 생성
-- [ ] Feature 기반 패키지 구조
+- [ ] Flutter 프로젝트 구조
 ```
-com.householdledger.app/
-├── MainActivity.kt
-├── di/
-│   ├── NetworkModule.kt
-│   ├── RepositoryModule.kt
-│   ├── UseCaseModule.kt
-│   └── ViewModelModule.kt
-├── ui/
-│   ├── auth/
-│   │   ├── LoginScreen.kt
-│   │   ├── SignupScreen.kt
-│   │   └── viewmodel/AuthViewModel.kt
-│   ├── dashboard/
-│   ├── transactions/
-│   ├── statistics/
-│   └── profile/
+lib/
+├── main.dart
+├── app.dart
+├── config/
+│   └── app_config.dart
+├── core/
+│   ├── theme/
+│   │   └── app_theme.dart
+│   ├── constants/
+│   │   └── app_constants.dart
+│   └── utils/
+│       ├── validators.dart
+│       └── extensions.dart
+├── data/
+│   ├── models/
+│   │   ├── user_model.dart
+│   │   ├── transaction_model.dart
+│   │   └── category_model.dart
+│   ├── repositories/
+│   │   ├── auth_repository.dart
+│   │   ├── transaction_repository.dart
+│   │   └── category_repository.dart
+│   ├── datasources/
+│   │   ├── remote/
+│   │   │   ├── auth_api.dart
+│   │   │   └── transaction_api.dart
+│   │   └── local/
+│   │       ├── local_storage.dart
+│   │       └── cache_manager.dart
+│   └── providers/
+│       └── http_client.dart
 ├── domain/
-│   ├── model/
-│   │   ├── User.kt
-│   │   ├── Transaction.kt
-│   │   └── Category.kt
-│   └── usecase/
-│       ├── LoginUseCase.kt
-│       ├── CreateTransactionUseCase.kt
-│       └── GetTransactionsUseCase.kt
-└── data/
-    ├── local/
-    │   ├── dao/
-    │   │   ├── TransactionDao.kt
-    │   │   └── CategoryDao.kt
-    │   └── database/
-    │       └── AppDatabase.kt
-    ├── remote/
-    │   ├── api/
-    │   │   ├── AuthApi.kt
-    │   │   ├── TransactionApi.kt
-    │   │   └── CategoryApi.kt
-    │   └── dto/
-    │       ├── LoginRequest.kt
-    │       └── TransactionResponse.kt
-    └── repository/
-        ├── AuthRepository.kt
-        ├── TransactionRepository.kt
-        └── CategoryRepository.kt
+│   ├── entities/
+│   │   ├── user.dart
+│   │   ├── transaction.dart
+│   │   └── category.dart
+│   ├── repositories/
+│   │   └── i_auth_repository.dart
+│   └── usecases/
+│       ├── login_usecase.dart
+│       └── get_transactions_usecase.dart
+└── presentation/
+    ├── bloc/
+    │   ├── auth/
+    │   │   ├── auth_bloc.dart
+    │   │   └── auth_state.dart
+    │   └── transaction/
+    │       ├── transaction_bloc.dart
+    │       └── transaction_state.dart
+    ├── pages/
+    │   ├── login/
+    │   │   ├── login_page.dart
+    │   │   └── widgets/
+    │   ├── dashboard/
+    │   │   ├── dashboard_page.dart
+    │   │   └── widgets/
+    │   ├── transactions/
+    │   │   ├── transaction_list_page.dart
+    │   │   └── widgets/
+    │   ├── statistics/
+    │   │   ├── statistics_page.dart
+    │   │   └── widgets/
+    │   └── profile/
+    │       ├── profile_page.dart
+    │       └── widgets/
+    └── widgets/
+        ├── common/
+        └── charts/
 ```
 
 ### 🔌 네트워크 계층 구축

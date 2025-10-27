@@ -1,219 +1,219 @@
-# 📱 Household Ledger Android
+# 💑 신혼부부 가계부 - Flutter 모바일 앱
 
-**신혼부부 가계부 안드로이드 앱**
+**🔄 기술 스택 변경**: Kotlin → Flutter  
+**📅 프로젝트 기간**: 6주  
+**🎯 목표**: Google Play 배포 가능한 MVP 앱
 
-## 📋 프로젝트 개요
+---
 
-Google Play Store에 배포 가능한 Kotlin 안드로이드 앱입니다.
+## 🚀 프로젝트 개요
 
-### 주요 특징
-- ✅ Jetpack Compose 기반 최신 UI
-- ✅ MVVM + Clean Architecture
-- ✅ 오프라인 모드 지원 (Room DB)
-- ✅ 실시간 데이터 동기화
-- ✅ 신혼부부 특화 기능
+신혼부부가 각자 입력해도 자동으로 하나의 가계부로 묶여 지출을 투명하게 공유할 수 있는 **모바일 가계부 앱**입니다.
+
+### ✨ 주요 특징
+- **Flutter 기반**: iOS, Android 동시 지원
+- **BLoC Pattern**: 명확한 상태 관리
+- **Clean Architecture**: 유지보수 가능한 구조
+- **오프라인 지원**: Hive DB로 로컬 캐싱
+- **실시간 동기화**: FastAPI 백엔드 연동
+
+---
 
 ## 🛠 기술 스택
 
-### 프론트엔드
-- **Kotlin** 1.9+
-- **Jetpack Compose** - 선언적 UI
-- **ViewModel** + **StateFlow** - 상태 관리
-- **Navigation Compose** - 화면 전환
-- **Hilt/Koin** - 의존성 주입
+### Frontend
+- **Flutter** 3.x - 크로스 플랫폼 프레임워크
+- **Dart** 3.x - 프로그래밍 언어
+- **flutter_bloc** - 상태 관리
+- **Hive** - 로컬 DB
+- **dio** - HTTP 클라이언트
+- **fl_chart** - 차트 라이브러리
 
-### 데이터 계층
-- **Retrofit** + **OkHttp** - HTTP 클라이언트
-- **Room** - 로컬 데이터베이스
-- **Coroutines** + **Flow** - 비동기 처리
-- **DataStore** - 설정 저장
+### Backend (기존)
+- **FastAPI** - REST API 서버
+- **MySQL** - 데이터베이스
+- **SQLAlchemy** - ORM
+- **JWT** - 인증
 
-### 유틸리티
-- **Coil** - 이미지 로딩
-- **Timber** - 로깅
-- **Material Design 3** - 디자인 시스템
+---
 
-## 📂 프로젝트 구조
+## 📁 프로젝트 구조
 
 ```
-house-hold-ledger-android/
-├── app/
-│   └── src/main/
-│       ├── java/com/householdledger/app/
-│       │   ├── MainActivity.kt
-│       │   ├── di/                 # 의존성 주입
-│       │   ├── ui/                 # UI 레이어
-│       │   │   ├── auth/
-│       │   │   ├── dashboard/
-│       │   │   ├── transactions/
-│       │   │   ├── statistics/
-│       │   │   └── profile/
-│       │   ├── domain/            # 도메인 레이어
-│       │   │   ├── model/
-│       │   │   └── usecase/
-│       │   └── data/              # 데이터 레이어
-│       │       ├── local/
-│       │       ├── remote/
-│       │       └── repository/
-│       └── res/
-│           ├── layout/
-│           ├── drawable/
-│           └── values/
-├── build.gradle.kts
-└── settings.gradle.kts
+lib/
+├── main.dart                    # 앱 진입점
+├── app.dart                     # MaterialApp 설정
+├── config/
+│   └── app_config.dart         # 앱 설정 (API URL 등)
+├── core/
+│   ├── theme/                   # 다크모드, 컬러
+│   ├── constants/              # 상수
+│   └── utils/                   # 유틸리티
+├── data/
+│   ├── models/                  # JSON 모델
+│   ├── repositories/            # Repository 구현
+│   ├── datasources/            # API, DB
+│   └── providers/              # HTTP Client
+├── domain/
+│   ├── entities/                # 순수 도메인 모델
+│   ├── repositories/            # Repository 인터페이스
+│   └── usecases/               # 비즈니스 로직
+└── presentation/
+    ├── bloc/                    # BLoC (상태 관리)
+    ├── pages/                  # 화면
+    └── widgets/                 # 재사용 위젯
 ```
 
-## 📱 주요 화면
+---
 
-### 인증
-- **Login** - 로그인 화면
-- **Signup** - 회원가입 화면
-- **ForgotPassword** - 비밀번호 찾기
+## 🎨 UI/UX 설계
 
-### 메인
-- **Dashboard** - 월별 요약 및 빠른 입력
-- **Transactions** - 거래 내역 목록 및 상세
-- **Statistics** - 카테고리별 차트 및 분석
-- **Profile** - 프로필 및 설정
-
-## 🎨 UI/UX
+### 주요 화면
+1. **로그인/회원가입** - 인증
+2. **대시보드** - 월별 요약, 빠른 입력
+3. **거래 내역** - 리스트, 필터, 검색
+4. **통계** - 차트, 카테고리 분석
+5. **프로필** - 설정, 카테고리 관리
 
 ### 디자인 시스템
-- Material Design 3 적용
-- 신혼부부 특화 색상 팔레트
-- 다크 모드 자동 지원
-- 24dp 그리드 시스템
+- **Primary**: 보라색 (`#7C3AED`)
+- **Secondary**: 핑크색 (`#EC4899`)
+- **Material Design 3**
+- **반응형 레이아웃**
 
-### 주요 기능
-- ✨ Swipe-to-Delete 제스처
-- 🔄 Pull-to-Refresh
-- 📊 다양한 차트 (Pie, Line)
-- 🎯 빠른 입력 FloatingActionButton
-- 🔍 고급 필터링 및 검색
+자세한 내용은 [DESIGN.md](./DESIGN.md) 참고
 
-## 🚀 시작하기
+---
 
-### 사전 요구사항
-- Android Studio Hedgehog+
-- JDK 17+
-- Android SDK (API 24+)
+## 🏗 개발 계획
+
+### Phase 1 (Week 1-3): 기본 구조
+- [x] Flutter 프로젝트 초기화
+- [ ] 의존성 설정
+- [ ] 디렉토리 구조 생성
+- [ ] 네트워크 계층 구축
+- [ ] 인증 화면 구현
+
+### Phase 2 (Week 4-6): 핵심 기능
+- [ ] 대시보드 구현
+- [ ] 거래 입력/조회
+- [ ] 통계 화면
+- [ ] 프로필 화면
+
+---
+
+## 🚀 빠른 시작
+
+### 필수 요구사항
+- **Flutter** 3.x
+- **Dart** 3.x
+- **Android SDK** (API 24+)
+- **FastAPI 서버** (localhost:8000)
 
 ### 설치 및 실행
 
 ```bash
-# 1. 저장소 클론
-git clone <repository-url>
-cd house-hold-ledger-android
+# 1. Flutter 설치 확인
+flutter doctor
 
-# 2. Android Studio에서 프로젝트 열기
-# File → Open → 프로젝트 선택
+# 2. 프로젝트 생성 (예정)
+flutter create household_ledger_app --org com.householdledger
 
-# 3. Gradle 동기화
-# Android Studio가 자동으로 Sync
+# 3. 의존성 설치
+flutter pub get
 
-# 4. 실행
-# 디바이스/에뮬레이터 연결 후 Run 버튼 클릭
+# 4. 개발 서버 실행
+flutter run
 ```
-
-### 환경 설정
-- `local.properties`에 SDK 경로 설정
-- FastAPI 서버 URL 설정 (BuildConfig)
-
-## 🧪 테스트
-
-```bash
-# Unit Tests
-./gradlew test
-
-# Instrumented Tests
-./gradlew connectedAndroidTest
-
-# 모든 테스트
-./gradlew test connectedAndroidTest
-```
-
-## 📦 빌드
-
-### Debug 빌드
-```bash
-./gradlew assembleDebug
-```
-
-### Release 빌드
-```bash
-# 1. keystore 생성
-keytool -genkey -v -keystore household-ledger-key.jks
-
-# 2. 서명 설정 (app/build.gradle.kts)
-# 3. 빌드
-./gradlew assembleRelease
-
-# APK 출력: app/build/outputs/apk/release/
-```
-
-## 🚢 Google Play 배포
-
-### 준비 작업
-1. 앱 아이콘 생성 (모든 밀도)
-2. 스크린샷 제작 (최소 2개)
-3. Feature Graphic (1024x500)
-4. 스토어 설명 작성
-5. 개인정보처리방침 URL
-
-### 배포 과정
-1. Google Play Console 등록
-2. 앱 정보 입력
-3. APK/AAB 업로드
-4. 콘텐츠 등급 설정
-5. 가격 및 배포 국가 선택
-6. 심사 제출
-
-## 🧩 통합 API
-
-FastAPI 백엔드 서버와 통신합니다.
-
-### 주요 API
-- `POST /api/v1/auth/login` - 로그인
-- `GET /api/v1/transactions` - 거래 목록
-- `POST /api/v1/transactions` - 거래 생성
-- `GET /api/v1/statistics` - 통계 조회
-
-자세한 API 명세는 [Swagger 문서](../house-hold-ledger-server/docs/swagger.json) 참조
-
-## 📝 개발 가이드
-
-자세한 작업 목록은 [TODO-ANDROID.md](./TODO-ANDROID.md)를 참고하세요.
-
-### 아키텍처 패턴
-- **MVVM**: ViewModel 기반 상태 관리
-- **Clean Architecture**: 계층 분리 (UI, Domain, Data)
-- **Repository Pattern**: 데이터 소스 추상화
-
-### 코딩 가이드
-- Kotlin Coding Conventions 준수
-- ktlint, detekt 사용
-- 최소 API 24 타겟
-
-## 🐛 문제 해결
-
-### 일반적인 이슈
-- **Gradle 동기화 실패**: SDK 경로 확인
-- **빌드 실패**: 프로젝트 Clean 후 Rebuild
-- **메모리 부족**: 프로젝트 설정에서 힙 증가
-
-## 📚 참고 문서
-
-- [기존 웹앱 프로젝트](../household-ledger/README.md)
-- [FastAPI 백엔드](../house-hold-ledger-server/README.md)
-- [Android 개발자 문서](https://developer.android.com/)
-
-## 📞 문의
-
-- GitHub Issues: 이슈 등록
-- PR 제출: Branch 생성 후 Pull Request
 
 ---
 
-**작성자**: Development Team  
-**최종 업데이트**: 2025.01
+## 📱 API 연동
 
+### 기본 설정
+```dart
+// config/app_config.dart
+class AppConfig {
+  static const String apiBaseUrl = 'http://localhost:8000';
+  static const String apiVersion = '/api/v1';
+}
+```
+
+### API 엔드포인트
+- `POST /api/v1/auth/login` - 로그인
+- `POST /api/v1/auth/signup` - 회원가입
+- `GET /api/v1/transactions` - 거래 조회
+- `POST /api/v1/transactions` - 거래 생성
+- `GET /api/v1/statistics` - 통계 조회
+
+---
+
+## 🧪 테스트 전략
+
+### Unit Tests
+- Domain 로직 (UseCase)
+- Repository 로직
+- 유틸리티 함수
+
+### Widget Tests
+- 화면 렌더링
+- 사용자 인터랙션
+
+### Integration Tests
+- 인증 플로우
+- 거래 CRUD 플로우
+
+---
+
+## 📦 빌드 및 배포
+
+### Android APK
+```bash
+flutter build apk --release
+```
+
+### Google Play
+```bash
+flutter build appbundle --release
+# Upload to Play Console
+```
+
+---
+
+## 🔄 개발 진행 상황
+
+### ✅ 완료
+- [x] Flutter 프로젝트 계획 수립
+- [x] UI/UX 설계 완료
+- [x] 기술 스택 선정
+
+### 🚧 진행 중
+- [ ] 프로젝트 초기화
+
+### 📋 예정
+- [ ] 인증 구현
+- [ ] 대시보드 구현
+- [ ] 거래 관리
+- [ ] 통계 화면
+
+---
+
+## 📚 문서
+
+- [TODO 목록](./TODO-ANDROID.md) - 상세 개발 계획
+- [UI/UX 설계](./DESIGN.md) - 화면별 디자인
+- [Server README](../household-ledger-server/README.md) - 백엔드 API
+
+---
+
+## 🤝 기여하기
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+**💑 신혼부부를 위한 가장 간단한 가계부 앱** ✨

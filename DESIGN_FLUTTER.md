@@ -1,85 +1,322 @@
-# 📱 Flutter 앱 UI/UX 설계
+# 📱 Flutter 앱 UI/UX 설계 (Material Design 3)
 
 **프로젝트**: 신혼부부 가계부 Flutter 앱  
 **날짜**: 2025년 10월  
-**플랫폼**: Flutter (iOS, Android)
+**플랫폼**: Flutter (iOS, Android)  
+**디자인 시스템**: [Material Design 3](https://m3.material.io/)
 
 ---
 
-## 🎨 디자인 시스템
+## 🎨 Material Design 3 디자인 시스템
 
-### 컬러 팔레트
+### 동적 컬러 팔레트 (Dynamic Color)
+Material Design 3의 핵심인 동적 컬러 시스템을 적용합니다.
+
 ```dart
+import 'package:flutter/material.dart';
+
 class AppColors {
-  // Primary Colors
-  static const Color primary = Color(0xFF7C3AED);      // 보라색
-  static const Color primaryVariant = Color(0xFF6D28D9);
-  static const Color onPrimary = Colors.white;
-
+  // Seed Color (기본 소스)
+  static const Color seedColor = Color(0xFF7C3AED);  // 보라색
+  
+  // Primary Colors (M3 Color System)
+  static const Color primary = Color(0xFF7C3AED);      // Primary
+  static const Color onPrimary = Color(0xFFFFFFFF);     // On Primary (텍스트)
+  static const Color primaryContainer = Color(0xFFE9D5FF);  // Container
+  static const Color onPrimaryContainer = Color(0xFF1A0061); // On Container
+  
   // Secondary Colors
-  static const Color secondary = Color(0xFFEC4899);    // 핑크색
-  static const Color onSecondary = Colors.white;
-
-  // Status Colors
-  static const Color error = Color(0xFFEF4444);
+  static const Color secondary = Color(0xFFEC4899);     // Secondary
+  static const Color onSecondary = Color(0xFFFFFFFF);
+  static const Color secondaryContainer = Color(0xFFFFD1E5); // Container
+  static const Color onSecondaryContainer = Color(0xFF4A0018); // On Container
+  
+  // Tertiary Colors (선택적)
+  static const Color tertiary = Color(0xFF03DAC6);
+  static const Color onTertiary = Color(0xFF000000);
+  
+  // Error Colors
+  static const Color error = Color(0xFFB3261E);
+  static const Color onError = Color(0xFFFFFFFF);
+  static const Color errorContainer = Color(0xFFF9DEDC);
+  static const Color onErrorContainer = Color(0xFF410E0B);
+  
+  // Surface Colors
+  static const Color surface = Color(0xFFFFFBFE);      // Light Mode
+  static const Color surfaceDark = Color(0xFF1C1B1F);  // Dark Mode
+  static const Color onSurface = Color(0xFF1C1B1F);
+  static const Color onSurfaceVariant = Color(0xFF49454F);
+  static const Color surfaceVariant = Color(0xFFE7E0EC);
+  
+  // Outline Colors
+  static const Color outline = Color(0xFF79747E);
+  static const Color outlineVariant = Color(0xFFCAC4D0);
+  
+  // Background Colors
+  static const Color background = Color(0xFFFFFBFE);
+  static const Color onBackground = Color(0xFF1C1B1F);
+  
+  // Status Colors (Semantic Colors)
   static const Color success = Color(0xFF10B981);
   static const Color warning = Color(0xFFF59E0B);
   static const Color info = Color(0xFF3B82F6);
-
-  // Neutral Colors
-  static const Color background = Color(0xFFFAFAFA);
-  static const Color surface = Colors.white;
-  static const Color surfaceVariant = Color(0xFFF3F4F6);
-  static const Color textPrimary = Color(0xFF1F2937);
-  static const Color textSecondary = Color(0xFF6B7280);
-  static const Color textDisabled = Color(0xFF9CA3AF);
+  
+  // Elevation Colors (M3)
+  static Color getSurfaceElevation(int level) {
+    return Color.alphaBlend(
+      primary.withOpacity(level * 0.05),
+      surface,
+    );
+  }
 }
 ```
 
-### 타이포그래피
+### 동적 테마 (Material You 지원)
 ```dart
-class AppTextStyles {
-  static const TextStyle displayLarge = TextStyle(
-    fontSize: 32,
-    fontWeight: FontWeight.bold,
-    color: AppColors.textPrimary,
+// Material 3 테마 설정
+ThemeData _buildTheme(BuildContext context) {
+  return ThemeData(
+    useMaterial3: true,  // Material 3 활성화
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: AppColors.seedColor,
+      brightness: Brightness.light,
+    ),
+    // 동적 컬러 지원 (Android 12+)
+    colorSchemeSeed: AppColors.seedColor,
+    
+    // 타이포그래피
+    textTheme: _buildTextTheme(),
+    
+    // 컴포넌트 테마
+    appBarTheme: AppBarTheme(
+      centerTitle: false,
+      elevation: 0,
+      surfaceTintColor: Colors.transparent,
+    ),
+    
+    // 카드 테마 (둥근 모서리 증가)
+    cardTheme: CardTheme(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24), // M3: 더 둥근 모서리
+      ),
+      elevation: 1,
+      surfaceTintColor: AppColors.primary,
+    ),
+    
+    // 버튼 테마
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        elevation: 1,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20), // M3 둥근 모서리
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      ),
+    ),
+    
+    // 입력 필드 테마
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: AppColors.surfaceVariant,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12), // M3 둥근 모서리
+      ),
+      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+    ),
+    
+    // FAB 테마
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      elevation: 3,
+    ),
   );
-  
-  static const TextStyle headlineMedium = TextStyle(
-    fontSize: 24,
-    fontWeight: FontWeight.w600,
-    color: AppColors.textPrimary,
-  );
-  
-  static const TextStyle titleLarge = TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.w600,
-    color: AppColors.textPrimary,
-  );
-  
-  static const TextStyle bodyLarge = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.normal,
-    color: AppColors.textPrimary,
-  );
-  
-  static const TextStyle bodyMedium = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.normal,
-    color: AppColors.textSecondary,
+}
+
+// 다크 모드 테마
+ThemeData _buildDarkTheme(BuildContext context) {
+  return ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.dark,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: AppColors.seedColor,
+      brightness: Brightness.dark,
+    ),
+    // ... (동일한 구조로 다크 모드 적용)
   );
 }
 ```
 
-### 간격 시스템
+### 타이포그래피 (Material Design 3)
+M3의 새로운 타이포그래피 시스템을 적용합니다.
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+// M3 Text Theme
+TextTheme _buildTextTheme() {
+  return GoogleFonts.notoSansTextTheme(
+    TextTheme(
+      // Display Styles (큰 제목)
+      displayLarge: TextStyle(
+        fontSize: 57,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0,
+        height: 1.12,
+      ),
+      displayMedium: TextStyle(
+        fontSize: 45,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0,
+        height: 1.16,
+      ),
+      displaySmall: TextStyle(
+        fontSize: 36,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0,
+        height: 1.22,
+      ),
+      
+      // Headline Styles (섹션 제목)
+      headlineLarge: TextStyle(
+        fontSize: 32,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0,
+        height: 1.25,
+      ),
+      headlineMedium: TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0,
+        height: 1.29,
+      ),
+      headlineSmall: TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0,
+        height: 1.33,
+      ),
+      
+      // Title Styles (카드 제목)
+      titleLarge: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0,
+        height: 1.27,
+      ),
+      titleMedium: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.15,
+        height: 1.50,
+      ),
+      titleSmall: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.1,
+        height: 1.43,
+      ),
+      
+      // Body Styles (본문)
+      bodyLarge: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.5,
+        height: 1.50,
+      ),
+      bodyMedium: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.25,
+        height: 1.43,
+      ),
+      bodySmall: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.4,
+        height: 1.33,
+      ),
+      
+      // Label Styles (라벨)
+      labelLarge: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.1,
+        height: 1.43,
+      ),
+      labelMedium: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.5,
+        height: 1.33,
+      ),
+      labelSmall: TextStyle(
+        fontSize: 11,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.5,
+        height: 1.45,
+      ),
+    ),
+  );
+}
+```
+
+**타이포그래피 특징:**
+- **Noto Sans** 기본 폰트
+- **더 자연스러운 줄 간격** (M3 개선 사항)
+- **둥근 숫자** (Lining Numbers)
+- **접근성 향상** (읽기 쉬운 크기와 간격)
+
+### 간격 시스템 (Material Design 3)
+M3의 8dp 그리드 시스템을 따릅니다.
+
 ```dart
 class AppSpacing {
-  static const double xs = 4.0;
-  static const double sm = 8.0;
-  static const double md = 16.0;
-  static const double lg = 24.0;
-  static const double xl = 32.0;
-  static const double xxl = 48.0;
+  // 8dp 그리드 기반 간격
+  static const double xs = 4.0;    // 0.5 × 8
+  static const double sm = 8.0;   // 1 × 8
+  static const double md = 16.0;  // 2 × 8
+  static const double lg = 24.0;  // 3 × 8
+  static const double xl = 32.0;  // 4 × 8
+  static const double xxl = 48.0; // 6 × 8
+  static const double xxxl = 64.0; // 8 × 8
+  
+  // 컴포넌트 패딩
+  static const double componentPadding = md;  // 16dp
+  static const double screenPadding = lg;     // 24dp
+  static const double cardPadding = md;       // 16dp
+  
+  // 컴포넌트 간격
+  static const double componentGap = sm;     // 8dp
+  static const double sectionGap = lg;       // 24dp
+  
+  // 터치 타겟 (최소 48dp)
+  static const double minTouchTarget = 48.0;
+  
+  // 최소 터치 마진
+  static const double minTouchMargin = sm;   // 8dp
+}
+```
+
+### 모서리 반경 (M3)
+```dart
+class AppRadius {
+  // M3 둥근 모서리 시스템
+  static const double xs = 4.0;    // 작은 컴포넌트 (Chip, Badge)
+  static const double sm = 8.0;    // 작은 요소 (Button)
+  static const double md = 12.0;   // 중간 요소 (Card)
+  static const double lg = 16.0;   // 큰 요소 (Sheet, Dialog)
+  static const double xl = 24.0;   // 매우 큰 요소 (Modal)
+  
+  // 컴포넌트별 반경
+  static const double buttonRadius = sm;   // 8dp
+  static const double cardRadius = lg;    // 16dp
+  static const double inputRadius = md;    // 12dp
+  static const double fabRadius = lg;     // 16dp
+  static const double chipRadius = xl;    // 24dp
+  static const double sheetRadius = xl;   // 24dp
 }
 ```
 

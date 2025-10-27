@@ -68,6 +68,5 @@ lib/
 
 ## 📚 문서
 
-- [설계 문서](../DESIGN_FLUTTER.md)
-- [TODO 목록](../TODO-ANDROID.md)
+프로젝트 현황은 `SUMMARY.md`를 참고하세요.
 

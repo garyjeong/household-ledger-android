@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 /// 앱 설정
 class AppConfig {
   AppConfig._();

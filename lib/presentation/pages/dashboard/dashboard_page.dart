@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../transactions/quick_add_modal.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -82,12 +83,28 @@ class DashboardPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          // TODO: 거래 입력 모달 표시
+          _showQuickAddModal(context);
         },
         icon: const Icon(Icons.add),
         label: const Text('거래 입력'),
       ),
       bottomNavigationBar: _BottomNavBar(currentIndex: 0),
+    );
+  }
+  
+  void _showQuickAddModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => QuickAddModal(
+        onSave: (data) {
+          // TODO: BLoC를 통한 거래 저장
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('거래가 저장되었습니다')),
+          );
+        },
+      ),
     );
   }
 }

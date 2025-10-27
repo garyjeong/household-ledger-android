@@ -17,8 +17,8 @@
 - ✅ AppBottomNavBar 컴포넌트
 
 ### 3. 아키텍처
-- ✅ BLoC 패턴 (Auth)
-- ✅ Repository 패턴
+- ✅ BLoC 패턴 (Auth, Transaction, Category, Statistics)
+- ✅ Repository 패턴 (4개)
 - ✅ Data Layer (API, Local Storage)
 - ✅ Domain Layer (Entities)
 - ✅ Presentation Layer (Pages, BLoC, Widgets)
@@ -53,33 +53,31 @@ lib/
 ├── domain/             # 도메인 계층
 │   └── entities/       # 엔티티
 └── presentation/       # 프레젠테이션 계층
-    ├── bloc/           # BLoC
-    ├── pages/          # 페이지
+    ├── bloc/           # BLoC (4개)
+    ├── pages/          # 페이지 (8개)
     └── widgets/        # 위젯
 ```
 
-총 **29개** Dart 파일
+총 **37개** Dart 파일
 
 ## 🚧 남은 작업
 
-### 1. API 연동
-- [ ] Transaction BLoC
-- [ ] Category BLoC
-- [ ] Statistics BLoC
-- [ ] 실제 API 호출 테스트
-- [ ] 에러 핸들링 강화
+### 1. UI-BLoC 연동
+- [ ] Transaction BLoC를 UI에 연결
+- [ ] Category BLoC를 UI에 연결
+- [ ] Statistics BLoC를 UI에 연결
+- [ ] Dependency Injection 완성
 
 ### 2. 데이터 처리
-- [ ] 카테고리 목록 로드
-- [ ] 거래 내역 CRUD
-- [ ] 통계 데이터 계산
-- [ ] 로컬 캐싱 (Hive)
+- [ ] 실제 API 호출 테스트
+- [ ] 에러 핸들링 강화
+- [ ] 로딩 상태 표시
+- [ ] 무한 스크롤
 
 ### 3. 기능 추가
 - [ ] 검색 기능
 - [ ] 필터 기능
 - [ ] 정렬 기능
-- [ ] 무한 스크롤
 - [ ] 그룹 관리
 
 ### 4. 테스트

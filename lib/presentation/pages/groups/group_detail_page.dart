@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../bloc/group/group_bloc.dart';
-import '../../../bloc/group/group_event.dart';
-import '../../../bloc/group/group_state.dart';
+import '../../bloc/group/group_bloc.dart';
+import '../../bloc/group/group_event.dart';
+import '../../bloc/group/group_state.dart';
 
 class GroupDetailPage extends StatefulWidget {
   final Map<String, dynamic> group;

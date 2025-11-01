@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../../../bloc/statistics/statistics_bloc.dart';
-import '../../../bloc/statistics/statistics_event.dart';
-import '../../../bloc/statistics/statistics_state.dart';
+import '../../bloc/statistics/statistics_bloc.dart';
+import '../../bloc/statistics/statistics_event.dart';
+import '../../bloc/statistics/statistics_state.dart';
 import '../../widgets/common/bottom_nav_bar.dart';
 
 class StatisticsPage extends StatefulWidget {

@@ -135,7 +135,7 @@ class RecurringRuleBloc extends Bloc<RecurringRuleEvent, RecurringRuleState> {
     emit(RecurringRuleLoading());
     
     try {
-      final date = event.date ?? DateFormat('yyyy-MM-dd').format(DateTime.now());
+      final date = DateFormat('yyyy-MM-dd').format(DateTime.now());
       await _repository.generateTransactionFromRule(
         ruleId: event.ruleId,
         date: date,

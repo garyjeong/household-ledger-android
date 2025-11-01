@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../bloc/transaction/transaction_bloc.dart';
-import '../../../bloc/transaction/transaction_event.dart';
-import '../../../bloc/transaction/transaction_state.dart';
-import '../../../bloc/statistics/statistics_bloc.dart';
-import '../../../bloc/statistics/statistics_event.dart';
-import '../../../bloc/statistics/statistics_state.dart';
+import '../../bloc/transaction/transaction_bloc.dart';
+import '../../bloc/transaction/transaction_event.dart';
+import '../../bloc/transaction/transaction_state.dart';
+import '../../bloc/statistics/statistics_bloc.dart';
+import '../../bloc/statistics/statistics_event.dart';
+import '../../bloc/statistics/statistics_state.dart';
 import '../../../../core/utils/dependency_injection.dart';
 import '../../../../domain/entities/transaction.dart';
 import '../transactions/quick_add_modal.dart';

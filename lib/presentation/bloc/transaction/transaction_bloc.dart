@@ -3,6 +3,7 @@ import 'transaction_event.dart';
 import 'transaction_state.dart';
 import '../../../data/repositories/transaction_repository.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../domain/entities/transaction.dart';
 
 class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
   final TransactionRepository _repository;

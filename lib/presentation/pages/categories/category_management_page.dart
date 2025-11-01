@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../bloc/category/category_bloc.dart';
-import '../../../bloc/category/category_event.dart';
-import '../../../bloc/category/category_state.dart';
+import '../../bloc/category/category_bloc.dart';
+import '../../bloc/category/category_event.dart';
+import '../../bloc/category/category_state.dart';
 import '../../../../domain/entities/transaction.dart';
 import 'category_form_modal.dart';
 

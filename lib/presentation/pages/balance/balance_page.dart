@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import '../../../bloc/balance/balance_bloc.dart';
-import '../../../bloc/balance/balance_event.dart';
-import '../../../bloc/balance/balance_state.dart';
+import '../../bloc/balance/balance_bloc.dart';
+import '../../bloc/balance/balance_event.dart';
+import '../../bloc/balance/balance_state.dart';
 
 class BalancePage extends StatefulWidget {
   const BalancePage({super.key});

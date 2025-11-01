@@ -1,0 +1,77 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Flutter: Android (Emulator - Local Server)",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "deviceId": "emulator-5554",
+      "args": [
+        "--dart-define=API_BASE_URL=http://10.0.2.2:8000"
+      ],
+      "toolArgs": [
+        "--verbose"
+      ],
+      "console": "debugConsole",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Flutter: Android (Emulator - Any Device)",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "args": [
+        "--dart-define=API_BASE_URL=http://10.0.2.2:8000"
+      ],
+      "toolArgs": [
+        "--verbose"
+      ],
+      "console": "debugConsole",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Flutter: Android (Physical Device)",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "args": [
+        "--dart-define=API_BASE_URL=http://172.30.1.53:8000"
+      ],
+      "toolArgs": [
+        "--verbose"
+      ],
+      "console": "debugConsole",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Flutter: Chrome (Web)",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "deviceId": "chrome",
+      "args": [
+        "--dart-define=API_BASE_URL=http://localhost:8000"
+      ],
+      "toolArgs": [
+        "--verbose"
+      ],
+      "console": "debugConsole",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Flutter: Debug Profile",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "deviceId": "emulator-5554",
+      "flutterMode": "profile",
+      "args": [
+        "--dart-define=API_BASE_URL=http://10.0.2.2:8000"
+      ],
+      "console": "debugConsole",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
+

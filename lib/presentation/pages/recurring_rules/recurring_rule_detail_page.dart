@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import '../../../bloc/recurring_rule/recurring_rule_bloc.dart';
-import '../../../bloc/recurring_rule/recurring_rule_event.dart';
-import '../../../bloc/recurring_rule/recurring_rule_state.dart';
+import '../../bloc/recurring_rule/recurring_rule_bloc.dart';
+import '../../bloc/recurring_rule/recurring_rule_event.dart';
+import '../../bloc/recurring_rule/recurring_rule_state.dart';
 import 'recurring_rule_form_modal.dart';
 
 class RecurringRuleDetailPage extends StatelessWidget {

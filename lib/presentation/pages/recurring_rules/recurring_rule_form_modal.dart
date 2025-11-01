@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../bloc/category/category_bloc.dart';
-import '../../../bloc/category/category_state.dart';
+import '../../bloc/category/category_bloc.dart';
+import '../../bloc/category/category_state.dart';
 
 class RecurringRuleFormModal extends StatefulWidget {
   final Map<String, dynamic>? initialRule;

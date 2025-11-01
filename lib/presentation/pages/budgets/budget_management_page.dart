@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import '../../../bloc/budget/budget_bloc.dart';
-import '../../../bloc/budget/budget_event.dart';
-import '../../../bloc/budget/budget_state.dart';
+import '../../bloc/budget/budget_bloc.dart';
+import '../../bloc/budget/budget_event.dart';
+import '../../bloc/budget/budget_state.dart';
 import 'budget_form_modal.dart';
 import 'budget_detail_page.dart';
 

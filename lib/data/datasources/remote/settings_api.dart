@@ -27,9 +27,10 @@ class SettingsApi {
   }
 
   /// 설정 초기화
-  Future<void> resetSettings() async {
+  Future<Map<String, dynamic>> resetSettings() async {
     try {
-      await _dio.delete('/settings');
+      final response = await _dio.delete('/settings');
+      return response.data as Map<String, dynamic>;
     } on DioException catch (e) {
       throw _handleError(e);
     }

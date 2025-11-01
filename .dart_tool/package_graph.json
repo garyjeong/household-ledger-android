@@ -13,6 +13,7 @@
         "fl_chart",
         "flutter",
         "flutter_bloc",
+        "flutter_colorpicker",
         "flutter_secure_storage",
         "flutter_svg",
         "google_fonts",
@@ -106,6 +107,13 @@
         "stream_channel",
         "test_api",
         "vector_math"
+      ]
+    },
+    {
+      "name": "flutter_colorpicker",
+      "version": "1.1.0",
+      "dependencies": [
+        "flutter"
       ]
     },
     {

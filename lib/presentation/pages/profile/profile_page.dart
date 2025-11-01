@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../bloc/auth/auth_bloc.dart';
-import '../../../bloc/auth/auth_event.dart';
-import '../../../bloc/auth/auth_state.dart';
-import '../../../bloc/category/category_bloc.dart';
-import '../../../bloc/group/group_bloc.dart';
-import '../../../bloc/settings/settings_bloc.dart';
-import '../../../bloc/settings/settings_event.dart';
-import '../../../bloc/settings/settings_state.dart';
-import '../../../bloc/balance/balance_bloc.dart';
+import '../../bloc/auth/auth_bloc.dart';
+import '../../bloc/auth/auth_event.dart';
+import '../../bloc/auth/auth_state.dart';
+import '../../bloc/category/category_bloc.dart';
+import '../../bloc/group/group_bloc.dart';
+import '../../bloc/settings/settings_bloc.dart';
+import '../../bloc/settings/settings_event.dart';
+import '../../bloc/settings/settings_state.dart';
+import '../../bloc/balance/balance_bloc.dart';
 import '../../../../domain/entities/user.dart';
-import '../../../../core/config/app_config.dart';
+import '../../../config/app_config.dart';
 import '../../widgets/common/bottom_nav_bar.dart';
 import '../login/login_page.dart';
 import '../categories/category_management_page.dart';
@@ -30,7 +30,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     // 페이지 로드 시 프로필 조회
-    context.read<AuthBloc>().add(const ProfileRequested());
+    context.read<AuthBloc>().add(ProfileRequested());
     // 설정 조회
     context.read<SettingsBloc>().add(const LoadSettings());
   }
@@ -96,7 +96,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
-                        context.read<AuthBloc>().add(const ProfileRequested());
+                        context.read<AuthBloc>().add(ProfileRequested());
                       },
                       child: const Text('다시 시도'),
                     ),
@@ -315,7 +315,7 @@ class _ProfilePageState extends State<ProfilePage> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              context.read<AuthBloc>().add(const LogoutRequested());
+              context.read<AuthBloc>().add(LogoutRequested());
             },
             child: Text(
               '로그아웃',

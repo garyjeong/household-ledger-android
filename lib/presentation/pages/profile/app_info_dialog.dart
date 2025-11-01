@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/config/app_config.dart';
+import '../../../config/app_config.dart';
 
 class AppInfoDialog extends StatelessWidget {
   const AppInfoDialog({super.key});

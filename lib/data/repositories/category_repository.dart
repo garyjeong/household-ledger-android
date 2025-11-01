@@ -11,7 +11,15 @@ class CategoryRepository {
   Future<List<Category>> getCategories({String? type}) async {
     final response = await _api.getCategories(type: type);
 
-    if (response['categories'] is List) {
+    // API가 List를 직접 반환하는 경우
+    if (response is List) {
+      return response
+          .map((json) => Category.fromJson(json as Map<String, dynamic>))
+          .toList();
+    }
+    
+    // API가 Map으로 반환하는 경우
+    if (response is Map<String, dynamic> && response['categories'] is List) {
       return (response['categories'] as List)
           .map((json) => Category.fromJson(json as Map<String, dynamic>))
           .toList();

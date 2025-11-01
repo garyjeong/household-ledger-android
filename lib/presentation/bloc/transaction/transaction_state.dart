@@ -18,11 +18,21 @@ class TransactionLoading extends TransactionState {}
 /// 거래 목록 로드 성공
 class TransactionsLoaded extends TransactionState {
   final List<Transaction> transactions;
+  final int total; // 전체 거래 수
+  final int offset; // 현재 오프셋
+  final int limit; // 페이지 크기
+  final bool hasMore; // 더 불러올 수 있는지
   
-  const TransactionsLoaded(this.transactions);
+  const TransactionsLoaded({
+    required this.transactions,
+    required this.total,
+    required this.offset,
+    required this.limit,
+    required this.hasMore,
+  });
 
   @override
-  List<Object?> get props => [transactions];
+  List<Object?> get props => [transactions, total, offset, limit, hasMore];
 }
 
 /// 거래 생성/수정/삭제 성공

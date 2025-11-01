@@ -6,6 +6,7 @@ import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
 import '../dashboard/dashboard_page.dart';
 import '../signup/signup_page.dart';
+import '../forgot_password/forgot_password_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -202,7 +203,12 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     TextButton(
                       onPressed: () {
-                        // TODO: 비밀번호 찾기 페이지로 이동
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ForgotPasswordPage(),
+                          ),
+                        );
                       },
                       child: const Text('비밀번호 찾기'),
                     ),

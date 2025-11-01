@@ -8,7 +8,7 @@ class AppConfig {
   
   // API Configuration
   static String get apiBaseUrl {
-    // TODO: 환경변수에서 읽어오도록 변경
+    // 환경변수에서 읽어오기 (--dart-define=API_BASE_URL=... 로 전달 가능)
     const String env = String.fromEnvironment('API_BASE_URL', defaultValue: 'http://localhost:8000');
     return env;
   }

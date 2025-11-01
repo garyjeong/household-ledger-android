@@ -13,15 +13,25 @@ class LoadTransactions extends TransactionEvent {
   final String? type;
   final String? startDate;
   final String? endDate;
+  final String? categoryId;
+  final String? search;
+  final int? offset; // 오프셋 (0부터 시작)
+  final int? limit; // 페이지 크기
+  final bool loadMore; // 더 불러오기 여부
   
   const LoadTransactions({
     this.type,
     this.startDate,
     this.endDate,
+    this.categoryId,
+    this.search,
+    this.offset,
+    this.limit,
+    this.loadMore = false,
   });
 
   @override
-  List<Object?> get props => [type, startDate, endDate];
+  List<Object?> get props => [type, startDate, endDate, categoryId, search, offset, limit, loadMore];
 }
 
 /// 거래 생성

@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'transaction_event.dart';
 import 'transaction_state.dart';
 import '../../../data/repositories/transaction_repository.dart';
+import '../../../core/constants/app_constants.dart';
 
 class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
   final TransactionRepository _repository;
@@ -22,16 +23,56 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
     LoadTransactions event,
     Emitter<TransactionState> emit,
   ) async {
-    emit(TransactionLoading());
+    // loadMore가 true이고 현재 상태가 TransactionsLoaded인 경우, 로딩 상태를 유지하면서 추가 로드
+    if (event.loadMore && state is TransactionsLoaded) {
+      final currentState = state as TransactionsLoaded;
+      if (!currentState.hasMore) {
+        return; // 더 불러올 데이터가 없으면 종료
+      }
+    } else {
+      emit(TransactionLoading());
+    }
     
     try {
-      final transactions = await _repository.getTransactions(
+      final result = await _repository.getTransactions(
         type: event.type,
         startDate: event.startDate,
         endDate: event.endDate,
+        categoryId: event.categoryId,
+        search: event.search,
+        offset: event.offset,
+        limit: event.limit ?? AppConstants.defaultPageSize,
       );
       
-      emit(TransactionsLoaded(transactions));
+      final transactions = result['transactions'] as List<Transaction>;
+      final total = result['total'] as int;
+      final offset = result['offset'] as int;
+      final limit = result['limit'] as int;
+      final hasMore = result['hasMore'] as bool;
+      
+      // loadMore가 true이면 기존 리스트에 추가
+      if (event.loadMore && state is TransactionsLoaded) {
+        final currentState = state as TransactionsLoaded;
+        final updatedTransactions = [
+          ...currentState.transactions,
+          ...transactions,
+        ];
+        emit(TransactionsLoaded(
+          transactions: updatedTransactions,
+          total: total,
+          offset: offset,
+          limit: limit,
+          hasMore: hasMore,
+        ));
+      } else {
+        emit(TransactionsLoaded(
+          transactions: transactions,
+          total: total,
+          offset: offset,
+          limit: limit,
+          hasMore: hasMore,
+        ));
+      }
     } catch (e) {
       emit(TransactionError(e.toString()));
     }
@@ -47,9 +88,20 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
     try {
       await _repository.createTransaction(event.data);
       
+      // 성공 메시지
+      emit(TransactionSuccess('거래가 성공적으로 추가되었습니다'));
+      
       // 목록 새로고침
-      final transactions = await _repository.getTransactions();
-      emit(TransactionsLoaded(transactions));
+      final result = await _repository.getTransactions(
+        limit: AppConstants.defaultPageSize,
+      );
+      emit(TransactionsLoaded(
+        transactions: result['transactions'] as List<Transaction>,
+        total: result['total'] as int,
+        offset: result['offset'] as int,
+        limit: result['limit'] as int,
+        hasMore: result['hasMore'] as bool,
+      ));
     } catch (e) {
       emit(TransactionError(e.toString()));
     }
@@ -65,9 +117,20 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
     try {
       await _repository.updateTransaction(event.id, event.data);
       
+      // 성공 메시지
+      emit(TransactionSuccess('거래가 성공적으로 수정되었습니다'));
+      
       // 목록 새로고침
-      final transactions = await _repository.getTransactions();
-      emit(TransactionsLoaded(transactions));
+      final result = await _repository.getTransactions(
+        limit: AppConstants.defaultPageSize,
+      );
+      emit(TransactionsLoaded(
+        transactions: result['transactions'] as List<Transaction>,
+        total: result['total'] as int,
+        offset: result['offset'] as int,
+        limit: result['limit'] as int,
+        hasMore: result['hasMore'] as bool,
+      ));
     } catch (e) {
       emit(TransactionError(e.toString()));
     }
@@ -83,9 +146,20 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
     try {
       await _repository.deleteTransaction(event.id);
       
+      // 성공 메시지
+      emit(TransactionSuccess('거래가 성공적으로 삭제되었습니다'));
+      
       // 목록 새로고침
-      final transactions = await _repository.getTransactions();
-      emit(TransactionsLoaded(transactions));
+      final result = await _repository.getTransactions(
+        limit: AppConstants.defaultPageSize,
+      );
+      emit(TransactionsLoaded(
+        transactions: result['transactions'] as List<Transaction>,
+        total: result['total'] as int,
+        offset: result['offset'] as int,
+        limit: result['limit'] as int,
+        hasMore: result['hasMore'] as bool,
+      ));
     } catch (e) {
       emit(TransactionError(e.toString()));
     }
@@ -97,8 +171,16 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
     Emitter<TransactionState> emit,
   ) async {
     try {
-      final transactions = await _repository.getTransactions();
-      emit(TransactionsLoaded(transactions));
+      final result = await _repository.getTransactions(
+        limit: AppConstants.defaultPageSize,
+      );
+      emit(TransactionsLoaded(
+        transactions: result['transactions'] as List<Transaction>,
+        total: result['total'] as int,
+        offset: result['offset'] as int,
+        limit: result['limit'] as int,
+        hasMore: result['hasMore'] as bool,
+      ));
     } catch (e) {
       emit(TransactionError(e.toString()));
     }

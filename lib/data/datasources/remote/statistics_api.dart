@@ -11,7 +11,7 @@ class StatisticsApi {
     String? period, // current-month, last-month, etc.
     String? startDate,
     String? endDate,
-    String? groupId,
+    int? groupId,
   }) async {
     try {
       final queryParams = <String, dynamic>{};

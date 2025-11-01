@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../bloc/auth/auth_bloc.dart';
+import '../../../bloc/auth/auth_event.dart';
+import '../../../bloc/auth/auth_state.dart';
+import '../../../../core/utils/dependency_injection.dart';
+import '../dashboard/dashboard_page.dart';
 
 class SignupPage extends StatefulWidget {
   final String? inviteCode;
@@ -19,7 +25,6 @@ class _SignupPageState extends State<SignupPage> {
   
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
-  bool _isLoading = false;
   
   @override
   void initState() {
@@ -39,22 +44,18 @@ class _SignupPageState extends State<SignupPage> {
     super.dispose();
   }
   
-  void _handleSignup() {
+  void _handleSignup(BuildContext context) {
     if (_formKey.currentState?.validate() ?? false) {
-      setState(() {
-        _isLoading = true;
-      });
-      
-      // TODO: BLoC를 통한 회원가입 로직 구현
-      
-      Future.delayed(const Duration(seconds: 2), () {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-          // TODO: 로그인 페이지로 이동 또는 바로 로그인
-        }
-      });
+      context.read<AuthBloc>().add(
+        SignupRequested(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          nickname: _nicknameController.text.trim(),
+          inviteCode: _inviteCodeController.text.trim().isEmpty 
+              ? null 
+              : _inviteCodeController.text.trim(),
+        ),
+      );
     }
   }
   
@@ -67,6 +68,32 @@ class _SignupPageState extends State<SignupPage> {
   
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => DependencyInjection.createAuthBloc(),
+      child: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Theme.of(context).colorScheme.error,
+              ),
+            );
+          } else if (state is AuthAuthenticated) {
+            // 회원가입 성공 시 대시보드로 이동
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const DashboardPage()),
+              (route) => false,
+            );
+          }
+        },
+        child: _buildBody(context),
+      ),
+    );
+  }
+  
+  Widget _buildBody(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('회원가입'),
@@ -209,21 +236,26 @@ class _SignupPageState extends State<SignupPage> {
                 const SizedBox(height: 32),
                 
                 // 회원가입 버튼
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _handleSignup,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: _isLoading
-                    ? SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      )
-                    : const Text('가입하기'),
+                BlocBuilder<AuthBloc, AuthState>(
+                  builder: (context, state) {
+                    final isLoading = state is AuthLoading;
+                    return ElevatedButton(
+                      onPressed: isLoading ? null : () => _handleSignup(context),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: isLoading
+                        ? SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          )
+                        : const Text('가입하기'),
+                    );
+                  },
                 ),
                 const SizedBox(height: 16),
                 
@@ -251,4 +283,3 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 }
-

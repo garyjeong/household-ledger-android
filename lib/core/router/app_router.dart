@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../core/utils/dependency_injection.dart';
 import '../../presentation/pages/dashboard/dashboard_page.dart';
 import '../../presentation/pages/transactions/transaction_list_page.dart';
 import '../../presentation/pages/statistics/statistics_page.dart';
@@ -25,6 +27,7 @@ class AppRouter {
         page = const DashboardPage();
     }
     
+    // BLoC는 이미 main.dart에서 제공되므로 추가 Provider 불필요
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => page),

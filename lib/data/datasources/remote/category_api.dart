@@ -7,7 +7,7 @@ class CategoryApi {
   CategoryApi(this._dio);
 
   /// 카테고리 목록 조회
-  Future<List<dynamic>> getCategories({
+  Future<dynamic> getCategories({
     String? type,
   }) async {
     try {
@@ -16,10 +16,24 @@ class CategoryApi {
 
       final response = await _dio.get('/categories', queryParameters: queryParams);
       
+      // API가 List를 직접 반환하는 경우
       if (response.data is List) {
         return response.data as List<dynamic>;
       }
-      return response.data['categories'] as List<dynamic>;
+      
+      // API가 Map으로 반환하는 경우
+      if (response.data is Map<String, dynamic>) {
+        final data = response.data as Map<String, dynamic>;
+        if (data['categories'] is List) {
+          return data['categories'] as List<dynamic>;
+        }
+        // items 키도 확인
+        if (data['items'] is List) {
+          return data['items'] as List<dynamic>;
+        }
+      }
+      
+      return [];
     } on DioException catch (e) {
       throw _handleError(e);
     }

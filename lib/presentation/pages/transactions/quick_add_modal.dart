@@ -1,9 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../bloc/category/category_bloc.dart';
+import '../../../bloc/category/category_event.dart';
+import '../../../bloc/category/category_state.dart';
+import '../../../../domain/entities/transaction.dart';
 
 class QuickAddModal extends StatefulWidget {
   final Function(Map<String, dynamic>)? onSave;
+  final bool isLoading;
+  final Transaction? initialTransaction;
   
-  const QuickAddModal({super.key, this.onSave});
+  const QuickAddModal({
+    super.key,
+    this.onSave,
+    this.isLoading = false,
+    this.initialTransaction,
+  });
   
   @override
   State<QuickAddModal> createState() => _QuickAddModalState();
@@ -13,17 +25,29 @@ class _QuickAddModalState extends State<QuickAddModal> {
   final _amountController = TextEditingController();
   final _memoController = TextEditingController();
   
-  String _selectedType = 'EXPENSE'; // EXPENSE, INCOME, TRANSFER
+  String _selectedType = 'EXPENSE'; // EXPENSE, INCOME
   String? _selectedCategoryId;
   DateTime _selectedDate = DateTime.now();
+  bool _isEditMode = false;
   
-  // 임시 카테고리 목록 (실제로는 API에서 가져옴)
-  final List<Map<String, dynamic>> _categories = [
-    {'id': '1', 'name': '음식', 'type': 'EXPENSE', 'color': '#F87171'},
-    {'id': '2', 'name': '교통', 'type': 'EXPENSE', 'color': '#60A5FA'},
-    {'id': '3', 'name': '쇼핑', 'type': 'EXPENSE', 'color': '#A78BFA'},
-    {'id': '4', 'name': '급여', 'type': 'INCOME', 'color': '#10B981'},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    
+    // 편집 모드인 경우 초기값 설정
+    if (widget.initialTransaction != null) {
+      _isEditMode = true;
+      final transaction = widget.initialTransaction!;
+      _selectedType = transaction.type;
+      _selectedCategoryId = transaction.categoryId;
+      _selectedDate = DateTime.tryParse(transaction.date) ?? DateTime.now();
+      _amountController.text = (int.tryParse(transaction.amount) ?? 0).toString();
+      _memoController.text = transaction.memo ?? '';
+    }
+    
+    // 카테고리 로드
+    context.read<CategoryBloc>().add(LoadCategories(type: _selectedType));
+  }
   
   @override
   void dispose() {
@@ -51,13 +75,12 @@ class _QuickAddModalState extends State<QuickAddModal> {
     final data = {
       'type': _selectedType,
       'amount': int.parse(amount),
-      'category_id': _selectedCategoryId,
+      'category_id': int.tryParse(_selectedCategoryId ?? '') ?? _selectedCategoryId,
       'date': _selectedDate.toIso8601String().split('T')[0],
-      'memo': _memoController.text,
+      'memo': _memoController.text.isEmpty ? null : _memoController.text,
     };
     
     widget.onSave?.call(data);
-    Navigator.pop(context);
   }
   
   void _selectDate() async {
@@ -77,10 +100,6 @@ class _QuickAddModalState extends State<QuickAddModal> {
   
   @override
   Widget build(BuildContext context) {
-    final filteredCategories = _categories.where(
-      (cat) => cat['type'] == _selectedType,
-    ).toList();
-    
     return DraggableScrollableSheet(
       initialChildSize: 0.9,
       minChildSize: 0.5,
@@ -113,7 +132,7 @@ class _QuickAddModalState extends State<QuickAddModal> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '거래 입력',
+                      _isEditMode ? '거래 수정' : '거래 입력',
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     IconButton(
@@ -135,7 +154,6 @@ class _QuickAddModalState extends State<QuickAddModal> {
                       segments: const [
                         ButtonSegment(value: 'EXPENSE', label: Text('지출')),
                         ButtonSegment(value: 'INCOME', label: Text('수입')),
-                        ButtonSegment(value: 'TRANSFER', label: Text('이체')),
                       ],
                       selected: {_selectedType},
                       onSelectionChanged: (Set<String> selection) {
@@ -143,6 +161,8 @@ class _QuickAddModalState extends State<QuickAddModal> {
                           _selectedType = selection.first;
                           _selectedCategoryId = null; // 카테고리 초기화
                         });
+                        // 카테고리 다시 로드
+                        context.read<CategoryBloc>().add(LoadCategories(type: _selectedType));
                       },
                     ),
                     const SizedBox(height: 24),
@@ -170,55 +190,89 @@ class _QuickAddModalState extends State<QuickAddModal> {
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 12),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        childAspectRatio: 1,
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 8,
-                      ),
-                      itemCount: filteredCategories.length,
-                      itemBuilder: (context, index) {
-                        final category = filteredCategories[index];
-                        final isSelected = _selectedCategoryId == category['id'];
+                    BlocBuilder<CategoryBloc, CategoryState>(
+                      builder: (context, state) {
+                        if (state is CategoryLoading) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
                         
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _selectedCategoryId = category['id'] as String;
-                            });
-                          },
-                          child: Card(
-                            color: isSelected
-                                ? Theme.of(context).colorScheme.primaryContainer
-                                : Theme.of(context).colorScheme.surfaceContainerHighest,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: Color(
-                                      int.parse(category['color'].toString().substring(1), radix: 16) + 0xFF000000,
-                                    ),
-                                    shape: BoxShape.circle,
+                        if (state is CategoryError) {
+                          return Center(
+                            child: Text(
+                              state.message,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          );
+                        }
+                        
+                        if (state is CategoriesLoaded) {
+                          final categories = state.categories
+                              .where((cat) => cat.type == _selectedType)
+                              .toList();
+                          
+                          if (categories.isEmpty) {
+                            return Center(
+                              child: Text(
+                                '카테고리가 없습니다',
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            );
+                          }
+                          
+                          return GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 4,
+                              childAspectRatio: 1,
+                              crossAxisSpacing: 8,
+                              mainAxisSpacing: 8,
+                            ),
+                            itemCount: categories.length,
+                            itemBuilder: (context, index) {
+                              final category = categories[index];
+                              final isSelected = _selectedCategoryId == category.id;
+                              
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedCategoryId = category.id;
+                                  });
+                                },
+                                child: Card(
+                                  color: isSelected
+                                      ? Theme.of(context).colorScheme.primaryContainer
+                                      : Theme.of(context).colorScheme.surfaceContainerHighest,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: Color(
+                                            int.parse(category.color.replaceFirst('#', ''), radix: 16) + 0xFF000000,
+                                          ),
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        category.name,
+                                        style: Theme.of(context).textTheme.labelSmall,
+                                        textAlign: TextAlign.center,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  category['name'] as String,
-                                  style: Theme.of(context).textTheme.labelSmall,
-                                  textAlign: TextAlign.center,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
+                              );
+                            },
+                          );
+                        }
+                        
+                        return const SizedBox.shrink();
                       },
                     ),
                     const SizedBox(height: 24),
@@ -246,11 +300,17 @@ class _QuickAddModalState extends State<QuickAddModal> {
                     
                     // 저장 버튼
                     ElevatedButton(
-                      onPressed: _handleSave,
+                      onPressed: widget.isLoading ? null : _handleSave,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: const Text('저장하기'),
+                      child: widget.isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Text(_isEditMode ? '수정하기' : '저장하기'),
                     ),
                     const SizedBox(height: 24),
                   ],
@@ -263,4 +323,3 @@ class _QuickAddModalState extends State<QuickAddModal> {
     );
   }
 }
-

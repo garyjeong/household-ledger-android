@@ -37,3 +37,27 @@ class AuthError extends AuthState {
   List<Object?> get props => [message];
 }
 
+/// 비밀번호 찾기 성공 상태
+class AuthForgotPasswordSuccess extends AuthState {
+  final String message;
+  final String? token; // 개발 환경용 토큰 (프로덕션에서는 제거)
+
+  const AuthForgotPasswordSuccess({
+    required this.message,
+    this.token,
+  });
+
+  @override
+  List<Object?> get props => [message, token];
+}
+
+/// 비밀번호 리셋 성공 상태
+class AuthResetPasswordSuccess extends AuthState {
+  final String message;
+
+  const AuthResetPasswordSuccess({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+

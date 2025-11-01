@@ -32,18 +32,22 @@ class Transaction {
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
     return Transaction(
-      id: json['id'] as String,
+      id: (json['id'] is int) ? json['id'].toString() : (json['id'] as String),
       type: json['type'] as String,
       date: json['date'] as String,
-      amount: json['amount'] as String,
-      categoryId: json['category_id'] as String?,
-      tagId: json['tag_id'] as String?,
+      amount: (json['amount'] is int) ? json['amount'].toString() : (json['amount'] as String),
+      categoryId: json['category_id']?.toString(),
+      tagId: json['tag_id']?.toString(),
       merchant: json['merchant'] as String?,
       memo: json['memo'] as String?,
-      createdAt: json['created_at'] as String,
-      updatedAt: json['updated_at'] as String,
-      category: json['category'] != null ? Category.fromJson(json['category']) : null,
-      tag: json['tag'] != null ? Tag.fromJson(json['tag']) : null,
+      createdAt: json['created_at'] is DateTime 
+          ? (json['created_at'] as DateTime).toIso8601String()
+          : (json['created_at'] as String),
+      updatedAt: json['updated_at'] is DateTime
+          ? (json['updated_at'] as DateTime).toIso8601String()
+          : (json['updated_at'] as String),
+      category: json['category'] != null ? Category.fromJson(json['category'] as Map<String, dynamic>) : null,
+      tag: json['tag'] != null ? Tag.fromJson(json['tag'] as Map<String, dynamic>) : null,
     );
   }
 
@@ -72,6 +76,7 @@ class Category {
   final String color;
   final String type; // EXPENSE, INCOME, TRANSFER
   final bool isDefault;
+  final int? budgetAmount;
 
   Category({
     required this.id,
@@ -79,15 +84,17 @@ class Category {
     required this.color,
     required this.type,
     required this.isDefault,
+    this.budgetAmount,
   });
 
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
-      id: json['id'] as String,
+      id: (json['id'] is int) ? json['id'].toString() : (json['id'] as String),
       name: json['name'] as String,
       color: json['color'] as String? ?? '#9CA3AF',
       type: json['type'] as String,
       isDefault: json['is_default'] as bool? ?? false,
+      budgetAmount: json['budget_amount'] as int?,
     );
   }
 
@@ -98,6 +105,7 @@ class Category {
       'color': color,
       'type': type,
       'is_default': isDefault,
+      'budget_amount': budgetAmount,
     };
   }
 }

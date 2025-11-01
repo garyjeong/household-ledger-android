@@ -13,7 +13,7 @@ class TransactionApi {
     String? endDate,
     String? categoryId,
     String? search,
-    int? page,
+    int? offset,
     int? limit,
   }) async {
     try {
@@ -23,7 +23,7 @@ class TransactionApi {
       if (endDate != null) queryParams['endDate'] = endDate;
       if (categoryId != null) queryParams['categoryId'] = categoryId;
       if (search != null) queryParams['search'] = search;
-      if (page != null) queryParams['page'] = page;
+      if (offset != null) queryParams['offset'] = offset;
       if (limit != null) queryParams['limit'] = limit;
 
       final response = await _dio.get('/transactions', queryParameters: queryParams);

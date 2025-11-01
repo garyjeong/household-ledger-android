@@ -1,9 +1,5 @@
 import 'package:dio/dio.dart';
-
-/// API Constants
-class ApiConstants {
-  static const String baseUrl = 'http://localhost:8000/api/v1';
-}
+import '../../../config/app_config.dart';
 
 /// 인증 API 클라이언트
 class AuthApi {
@@ -18,7 +14,7 @@ class AuthApi {
   }) async {
     try {
       final response = await _dio.post(
-        '${ApiConstants.baseUrl}/auth/login',
+        '/auth/login',
         data: {
           'email': email,
           'password': password,
@@ -49,7 +45,7 @@ class AuthApi {
       }
 
       final response = await _dio.post(
-        '${ApiConstants.baseUrl}/auth/signup',
+        '/auth/signup',
         data: data,
       );
       return response.data as Map<String, dynamic>;
@@ -64,10 +60,103 @@ class AuthApi {
   }) async {
     try {
       final response = await _dio.post(
-        '${ApiConstants.baseUrl}/auth/refresh',
+        '/auth/refresh',
         data: {'refresh_token': refreshToken},
       );
       return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  /// 프로필 조회
+  Future<Map<String, dynamic>> getProfile() async {
+    try {
+      final response = await _dio.get('/auth/profile');
+      return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  /// 프로필 수정
+  Future<Map<String, dynamic>> updateProfile({
+    String? nickname,
+    String? email,
+  }) async {
+    try {
+      final data = <String, dynamic>{};
+      if (nickname != null) data['nickname'] = nickname;
+      if (email != null) data['email'] = email;
+
+      final response = await _dio.put(
+        '/auth/profile',
+        data: data,
+      );
+      return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  /// 로그아웃
+  Future<void> logout() async {
+    try {
+      await _dio.post('/auth/logout');
+    } on DioException catch (e) {
+      // 로그아웃은 실패해도 클라이언트에서 토큰 삭제
+      throw _handleError(e);
+    }
+  }
+
+  /// 비밀번호 변경
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    try {
+      await _dio.post(
+        '/auth/change-password',
+        data: {
+          'current_password': currentPassword,
+          'new_password': newPassword,
+        },
+      );
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  /// 비밀번호 찾기 (리셋 토큰 요청)
+  Future<Map<String, dynamic>> forgotPassword({
+    required String email,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/auth/forgot-password',
+        data: {
+          'email': email,
+        },
+      );
+      return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  /// 비밀번호 리셋 (토큰으로 비밀번호 변경)
+  Future<void> resetPassword({
+    required String token,
+    required String newPassword,
+  }) async {
+    try {
+      await _dio.post(
+        '/auth/reset-password',
+        data: {
+          'token': token,
+          'new_password': newPassword,
+        },
+      );
     } on DioException catch (e) {
       throw _handleError(e);
     }

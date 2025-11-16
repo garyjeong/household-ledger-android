@@ -17,6 +17,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
     on<UpdateTransaction>(_onUpdateTransaction);
     on<DeleteTransaction>(_onDeleteTransaction);
     on<RefreshTransactions>(_onRefreshTransactions);
+    on<QuickAddTransaction>(_onQuickAddTransaction);
   }
 
   /// 거래 목록 조회
@@ -172,6 +173,35 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
     Emitter<TransactionState> emit,
   ) async {
     try {
+      final result = await _repository.getTransactions(
+        limit: AppConstants.defaultPageSize,
+      );
+      emit(TransactionsLoaded(
+        transactions: result['transactions'] as List<Transaction>,
+        total: result['total'] as int,
+        offset: result['offset'] as int,
+        limit: result['limit'] as int,
+        hasMore: result['hasMore'] as bool,
+      ));
+    } catch (e) {
+      emit(TransactionError(e.toString()));
+    }
+  }
+
+  /// 빠른 거래 추가 (Quick Add)
+  Future<void> _onQuickAddTransaction(
+    QuickAddTransaction event,
+    Emitter<TransactionState> emit,
+  ) async {
+    emit(TransactionLoading());
+    
+    try {
+      await _repository.quickAddTransaction(event.data);
+      
+      // 성공 메시지
+      emit(TransactionSuccess('거래가 성공적으로 추가되었습니다'));
+      
+      // 목록 새로고침
       final result = await _repository.getTransactions(
         limit: AppConstants.defaultPageSize,
       );

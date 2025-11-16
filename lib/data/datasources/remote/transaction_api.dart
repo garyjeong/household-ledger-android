@@ -62,6 +62,16 @@ class TransactionApi {
     }
   }
 
+  /// 빠른 거래 추가 (Quick Add - 카테고리 자동 생성)
+  Future<Map<String, dynamic>> quickAdd(Map<String, dynamic> data) async {
+    try {
+      final response = await _dio.post('/transactions/quick-add', data: data);
+      return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   /// 에러 처리
   String _handleError(DioException error) {
     if (error.response != null) {

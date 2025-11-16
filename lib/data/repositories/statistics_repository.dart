@@ -8,14 +8,11 @@ class StatisticsRepository {
 
   /// 통계 데이터 조회
   Future<Map<String, dynamic>> getStatistics({
-    String? period, // current-month, last-month, etc.
     String? startDate,
     String? endDate,
-    String? type,
     int? groupId,
   }) async {
     final response = await _api.getStatistics(
-      period: period,
       startDate: startDate,
       endDate: endDate,
       groupId: groupId,

@@ -22,19 +22,11 @@ class StatisticsBloc extends Bloc<StatisticsEvent, StatisticsState> {
     emit(StatisticsLoading());
     
     try {
-      // period 또는 startDate/endDate 사용
-      String? period;
-      if (event.startDate == null && event.endDate == null) {
-        period = 'current-month'; // 기본값
-      }
-      
-            final data = await _repository.getStatistics(
-              period: period,
-              startDate: event.startDate,
-              endDate: event.endDate,
-              type: event.type,
-              groupId: event.groupId,
-            );
+      final data = await _repository.getStatistics(
+        startDate: event.startDate,
+        endDate: event.endDate,
+        groupId: event.groupId,
+      );
       
       emit(StatisticsLoaded(data));
     } catch (e) {
@@ -49,7 +41,15 @@ class StatisticsBloc extends Bloc<StatisticsEvent, StatisticsState> {
   ) async {
     emit(StatisticsLoading());
     try {
-      final data = await _repository.getStatistics(period: 'current-month');
+      // 기본값: 현재 날짜 기준 1개월 전 ~ 현재 날짜
+      final now = DateTime.now();
+      final startDate = DateTime(now.year, now.month - 1, now.day);
+      final endDate = now;
+      
+      final data = await _repository.getStatistics(
+        startDate: startDate.toIso8601String().split('T')[0],
+        endDate: endDate.toIso8601String().split('T')[0],
+      );
       emit(StatisticsLoaded(data));
     } catch (e) {
       emit(StatisticsError(e.toString()));

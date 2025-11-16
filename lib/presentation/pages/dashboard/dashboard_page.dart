@@ -339,7 +339,7 @@ class _DashboardPageState extends State<DashboardPage> {
             builder: (context, state) {
               return QuickAddModal(
                 onSave: (data) {
-                  context.read<TransactionBloc>().add(CreateTransaction(data));
+                  context.read<TransactionBloc>().add(QuickAddTransaction(data));
                 },
                 isLoading: state is TransactionLoading,
               );

@@ -6,6 +6,7 @@ class Transaction {
   final String amount; // BigInt를 string으로 변환
   final String? categoryId;
   final String? tagId;
+  final String? recurringRuleId;
   final String? merchant;
   final String? memo;
   final String createdAt;
@@ -22,6 +23,7 @@ class Transaction {
     required this.amount,
     this.categoryId,
     this.tagId,
+    this.recurringRuleId,
     this.merchant,
     this.memo,
     required this.createdAt,
@@ -38,6 +40,7 @@ class Transaction {
       amount: (json['amount'] is int) ? json['amount'].toString() : (json['amount'] as String),
       categoryId: json['category_id']?.toString(),
       tagId: json['tag_id']?.toString(),
+      recurringRuleId: json['recurring_rule_id']?.toString(),
       merchant: json['merchant'] as String?,
       memo: json['memo'] as String?,
       createdAt: json['created_at'] is DateTime 
@@ -59,6 +62,7 @@ class Transaction {
       'amount': amount,
       'category_id': categoryId,
       'tag_id': tagId,
+      'recurring_rule_id': recurringRuleId,
       'merchant': merchant,
       'memo': memo,
       'created_at': createdAt,

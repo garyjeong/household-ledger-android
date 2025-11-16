@@ -70,3 +70,13 @@ class RefreshTransactions extends TransactionEvent {
   const RefreshTransactions();
 }
 
+/// 빠른 거래 추가 (Quick Add - 카테고리 자동 생성)
+class QuickAddTransaction extends TransactionEvent {
+  final Map<String, dynamic> data;
+  
+  const QuickAddTransaction(this.data);
+
+  @override
+  List<Object?> get props => [data];
+}
+

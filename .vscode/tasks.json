@@ -1,0 +1,45 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Backend Server",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/../household-ledger-server && if [ -f .venv/bin/activate ]; then source .venv/bin/activate && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000; else python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000; fi",
+      "isBackground": true,
+      "options": {
+        "env": {
+          "DATABASE_URL": "mysql+pymysql://gary:wjdwhdans@localhost:3306/household_ledger",
+          "JWT_SECRET": "your-secret-key-change-in-production",
+          "JWT_REFRESH_SECRET": "your-refresh-secret-change-in-production",
+          "CORS_ORIGINS": "http://localhost:3001,http://localhost:3000"
+        }
+      },
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^.*$",
+          "file": 1,
+          "location": 2,
+          "message": 3
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": ".*Application startup complete.*|.*Uvicorn running on.*|.*Started server process.*"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "focus": false,
+        "clear": false
+      }
+    },
+    {
+      "label": "Check Backend Server",
+      "type": "shell",
+      "command": "curl -s http://localhost:8000/health > /dev/null && echo 'Server is running' || echo 'Server is not running'",
+      "problemMatcher": []
+    }
+  ]
+}
+

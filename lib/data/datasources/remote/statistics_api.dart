@@ -8,17 +8,15 @@ class StatisticsApi {
 
   /// 통계 데이터 조회
   Future<Map<String, dynamic>> getStatistics({
-    String? period, // current-month, last-month, etc.
     String? startDate,
     String? endDate,
     int? groupId,
   }) async {
     try {
       final queryParams = <String, dynamic>{};
-      if (period != null) queryParams['period'] = period;
-      if (startDate != null) queryParams['startDate'] = startDate;
-      if (endDate != null) queryParams['endDate'] = endDate;
-      if (groupId != null) queryParams['groupId'] = groupId;
+      if (startDate != null) queryParams['start_date'] = startDate;
+      if (endDate != null) queryParams['end_date'] = endDate;
+      if (groupId != null) queryParams['group_id'] = groupId;
 
       final response = await _dio.get('/statistics', queryParameters: queryParams);
       return response.data as Map<String, dynamic>;
@@ -29,12 +27,19 @@ class StatisticsApi {
 
   /// 월별 통계
   Future<Map<String, dynamic>> getMonthlyStats({
-    required String period, // YYYY-MM
+    String? startDate,
+    String? endDate,
+    int? groupId,
   }) async {
     try {
+      final queryParams = <String, dynamic>{};
+      if (startDate != null) queryParams['start_date'] = startDate;
+      if (endDate != null) queryParams['end_date'] = endDate;
+      if (groupId != null) queryParams['group_id'] = groupId;
+
       final response = await _dio.get(
         '/dashboard/monthly-stats',
-        queryParameters: {'period': period},
+        queryParameters: queryParams,
       );
       return response.data as Map<String, dynamic>;
     } on DioException catch (e) {

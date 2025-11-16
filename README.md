@@ -29,6 +29,19 @@ flutter run -d android
 flutter run --dart-define=API_BASE_URL=http://your-server:8000
 ```
 
+### VS Code 디버그 실행 (권장)
+
+F5 키를 누르면 백엔드 서버가 자동으로 시작되고 Flutter 앱이 실행됩니다.
+
+1. **VS Code에서 F5 키 누르기**
+   - 백엔드 서버가 자동으로 시작됩니다
+   - 서버 준비 완료 후 Flutter 앱이 실행됩니다
+
+2. **디버그 설정 선택**
+   - `Flutter: Debug (Auto Device)` - 자동 디바이스 선택 (기본값)
+   - `Flutter: Android (Emulator - Local Server)` - 특정 에뮬레이터
+   - `Flutter: Chrome (Web)` - 웹 브라우저
+
 ## 📁 프로젝트 구조
 
 ```
@@ -128,6 +141,11 @@ lib/
 ## 🧪 앱 테스트 방법
 
 ### 1. 로컬 서버 실행 (필수)
+
+#### 방법 1: VS Code F5 디버그 실행 (권장)
+- Flutter 앱 워크스페이스에서 F5 키를 누르면 백엔드 서버가 자동으로 시작됩니다
+
+#### 방법 2: 수동 실행
 ```bash
 # 서버 디렉토리로 이동
 cd ../household-ledger-server
@@ -136,12 +154,10 @@ cd ../household-ledger-server
 source .venv/bin/activate
 
 # 데이터베이스 실행 (별도 터미널)
-cd docker/database
-./start-db.sh
+# MySQL이 localhost:3306에서 실행 중이어야 합니다
 
 # FastAPI 서버 실행
-cd ../../app
-uvicorn main:app --reload
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### 2. Flutter 앱 실행
@@ -161,18 +177,19 @@ flutter run -d ios
 ### 3. 기능 테스트
 
 #### 인증 기능
-1. 회원가입: 이메일, 비밀번호, 닉네임 입력
+1. 회원가입: 이메일, 비밀번호, 닉네임 입력 (초대 코드로 그룹 자동 가입)
 2. 로그인: 생성한 계정으로 로그인
 3. 프로필 수정: 닉네임, 이메일 변경
 4. 비밀번호 변경
-5. 로그아웃
+5. 비밀번호 찾기/재설정 (프로덕션: 이메일 발송)
+6. 로그아웃
 
 #### 거래 관리
-- 거래 목록 조회 (검색, 필터, 정렬, 무한 스크롤)
+- 거래 목록 조회 (검색, 필터, 정렬, 무한 스크롤, start_date/end_date)
 - 거래 상세 보기
-- 거래 생성 (Quick Add Modal)
-- 거래 수정
-- 거래 삭제
+- 거래 생성 (Quick Add Modal - 카테고리 자동 생성)
+- 거래 수정 (그룹 멤버도 수정 가능)
+- 거래 삭제 (그룹 멤버도 삭제 가능)
 - 페이지네이션 (오프셋 기반)
 
 #### 카테고리 관리
@@ -191,7 +208,7 @@ flutter run -d ios
 - 월별 통계 조회
 - 카테고리별 통계 (Pie Chart)
 - 일별 추이 (Line Chart)
-- 기간 선택 (current-month, last-month 등)
+- 기간 선택 (start_date/end_date, 기본값: 최근 1개월)
 
 #### 예산 관리
 - 예산 목록 조회
@@ -243,15 +260,15 @@ flutter run -d ios
 - ✅ 페이지네이션 (무한 스크롤)
 
 #### API 연동
-- ✅ Auth API (로그인, 회원가입, 프로필, 비밀번호 변경/찾기/재설정, 로그아웃, 토큰 갱신)
-- ✅ Transaction API (CRUD, 검색, 필터, 페이지네이션)
-- ✅ Category API (CRUD, 색상, 예산)
-- ✅ Statistics API (통계 조회, groupId 지원, 기간 필터)
-- ✅ Group API (CRUD, 초대 코드 생성/복사, 참가/나가기)
+- ✅ Auth API (로그인, 회원가입(초대 코드 지원), 프로필, 비밀번호 변경/찾기/재설정, 로그아웃, 토큰 갱신)
+- ✅ Transaction API (CRUD, Quick Add, 검색, 필터, 페이지네이션, start_date/end_date)
+- ✅ Category API (CRUD, 색상, 예산, 삭제 시 연결된 거래 알림)
+- ✅ Statistics API (통계 조회, groupId 지원, start_date/end_date 기간 필터)
+- ✅ Group API (CRUD, 초대 코드 생성/복사, 참가/나가기, 멤버 확인 후 삭제)
 - ✅ Settings API (조회/수정/초기화)
-- ✅ Balance API (잔액 조회, 예상 잔액, 월별 추이)
-- ✅ Budget API (예산 CRUD, 예산 현황)
-- ✅ Recurring Rule API (반복 규칙 CRUD, 거래 생성)
+- ✅ Balance API (잔액 조회, 예상 잔액, 월별 추이, 이체 거래 포함)
+- ✅ Budget API (예산 CRUD, 예산 현황, 카테고리별 예산 대비 지출)
+- ✅ Recurring Rule API (반복 규칙 CRUD, 거래 생성, recurring_rule_id 구분)
 
 #### 디자인
 - ✅ Material Design 3
@@ -291,15 +308,16 @@ flutter build apk --dart-define=API_BASE_URL=https://api.example.com
 
 ## 📝 주요 기능
 
-1. **거래 관리**: 거래 생성, 수정, 삭제, 검색, 필터링, 무한 스크롤
-2. **카테고리 관리**: 카테고리 CRUD, 색상 설정, 예산 설정
-3. **통계**: 월별/기간별 통계, 카테고리별 분석, 추이 그래프
-4. **그룹 관리**: 그룹 생성/참가, 초대 코드 생성 및 클립보드 복사
-5. **예산 관리**: 월별 예산 CRUD, 예산 대비 지출 현황
-6. **반복 규칙**: 반복 거래 규칙 CRUD, 날짜 범위 처리, 자동 거래 생성
-7. **잔액 조회**: 현재/예상 잔액, 월별 추이 그래프
-8. **프로필 관리**: 프로필 수정, 비밀번호 변경/찾기, 알림 설정, 앱 정보
+1. **거래 관리**: 거래 생성, 수정, 삭제, 검색, 필터링, 무한 스크롤, Quick Add (카테고리 자동 생성)
+2. **카테고리 관리**: 카테고리 CRUD, 색상 설정, 예산 설정, 삭제 시 연결된 거래 알림
+3. **통계**: 월별/기간별 통계 (start_date/end_date), 카테고리별 분석, 추이 그래프
+4. **그룹 관리**: 그룹 생성/참가, 초대 코드 생성 및 클립보드 복사, 회원가입 시 자동 가입
+5. **예산 관리**: 월별 예산 CRUD, 예산 대비 지출 현황, 카테고리별 예산 현황
+6. **반복 규칙**: 반복 거래 규칙 CRUD, 날짜 범위 처리, 자동 거래 생성, recurring_rule_id 구분
+7. **잔액 조회**: 현재/예상 잔액, 월별 추이 그래프, 이체 거래 포함
+8. **프로필 관리**: 프로필 수정, 비밀번호 변경/찾기(이메일 발송), 알림 설정, 앱 정보
 9. **자동 인증**: JWT 토큰 자동 관리 및 갱신
+10. **개발 환경**: VS Code F5 디버그 실행 시 백엔드 서버 자동 시작
 
 ## 📱 Android 에뮬레이터 실행 방법
 

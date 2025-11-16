@@ -121,5 +121,22 @@ class TransactionRepository {
   Future<void> deleteTransaction(String id) async {
     await _api.deleteTransaction(id);
   }
+
+  /// 빠른 거래 추가 (Quick Add - 카테고리 자동 생성)
+  Future<Transaction> quickAddTransaction(Map<String, dynamic> data) async {
+    final response = await _api.quickAdd(data);
+    // Quick Add API 응답 형식: { "success": true, "transaction": {...} }
+    if (response is Map<String, dynamic>) {
+      if (response['transaction'] != null) {
+        return Transaction.fromJson(response['transaction'] as Map<String, dynamic>);
+      }
+      if (response['data'] != null) {
+        return Transaction.fromJson(response['data'] as Map<String, dynamic>);
+      }
+      // 직접 transaction 객체인 경우
+      return Transaction.fromJson(response);
+    }
+    throw Exception('Invalid response format');
+  }
 }
 

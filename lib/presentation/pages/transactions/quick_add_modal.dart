@@ -27,6 +27,7 @@ class _QuickAddModalState extends State<QuickAddModal> {
   
   String _selectedType = 'EXPENSE'; // EXPENSE, INCOME
   String? _selectedCategoryId;
+  String? _selectedCategoryName; // Quick Add를 위한 카테고리 이름
   DateTime _selectedDate = DateTime.now();
   bool _isEditMode = false;
   
@@ -65,17 +66,18 @@ class _QuickAddModalState extends State<QuickAddModal> {
       return;
     }
     
-    if (_selectedCategoryId == null) {
+    if (_selectedCategoryName == null || _selectedCategoryName!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('카테고리를 선택해주세요')),
       );
       return;
     }
     
+    // Quick Add API 형식: category_name 사용
     final data = {
       'type': _selectedType,
       'amount': int.parse(amount),
-      'category_id': int.tryParse(_selectedCategoryId ?? '') ?? _selectedCategoryId,
+      'category_name': _selectedCategoryName,
       'date': _selectedDate.toIso8601String().split('T')[0],
       'memo': _memoController.text.isEmpty ? null : _memoController.text,
     };
@@ -237,6 +239,7 @@ class _QuickAddModalState extends State<QuickAddModal> {
                                 onTap: () {
                                   setState(() {
                                     _selectedCategoryId = category.id;
+                                    _selectedCategoryName = category.name;
                                   });
                                 },
                                 child: Card(
